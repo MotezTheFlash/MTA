@@ -2,25 +2,27 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios, { AxiosResponse } from "axios";
 import { RootState } from "../store";
 import Cookies from "js-cookie";
-interface LoginData {
+interface UserData {
   email: string;
-  password: string;
+  phone: string;
+  location: string;
+  username: string;
 }
 
-interface LoginState {
+interface UserState {
   loading: boolean;
   error: string | null;
   userInfos: any;
 }
-export const loginUser: any = createAsyncThunk(
-  "login/LoginUser",
-  async (loginData: LoginData) => {
+export const updateUser: any = createAsyncThunk(
+  "update/updateUser",
+  async (userData: UserData) => {
     try {
-      const response: AxiosResponse<any> = await axios.post(
-        "http://localhost:5000/api/v1/auth/login",
-
-        loginData,
-        { withCredentials: true }
+      const response: AxiosResponse<any> = await axios.put(
+        "http://localhost:5000/api/v1/users",
+        userData,
+        { headers: { Authorization: `Bearer ${Cookies.get("token")}` } }
+        /* { withCredentials: true }, */
       );
       return response.data;
     } catch (error) {
@@ -42,36 +44,29 @@ export const getUserDetails: any = createAsyncThunk(
     }
   }
 );
-export const logout: any = createAsyncThunk("logout/logoutUser", async () => {
-  try {
-    Cookies.remove("token");
-  } catch (error) {
-    throw error;
-  }
-});
 
-const initialState: LoginState = {
+const initialState: UserState = {
   loading: false,
   error: null,
   userInfos: {},
 };
 
-const loginSlice = createSlice({
+const userSlice = createSlice({
   name: "register",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(loginUser.pending, (state) => {
+      .addCase(updateUser.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(loginUser.fulfilled, (state) => {
+      .addCase(updateUser.fulfilled, (state) => {
         state.loading = false;
       })
-      .addCase(loginUser.rejected, (state, action) => {
+      .addCase(updateUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "login failed";
+        state.error = action.error.message || "updating user failed";
       })
       .addCase(getUserDetails.pending, (state) => {
         state.loading = true;
@@ -84,20 +79,9 @@ const loginSlice = createSlice({
       .addCase(getUserDetails.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "cannot get user infos";
-      })
-      .addCase(logout.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(logout.fulfilled, (state) => {
-        state.loading = false;
-      })
-      .addCase(logout.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || "could not logout";
       });
   },
 });
 
-export default loginSlice.reducer;
-export const selectLogin = (state: RootState) => state.login;
+export default userSlice.reducer;
+export const selectUser = (state: RootState) => state.user;

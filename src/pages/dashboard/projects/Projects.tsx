@@ -4,26 +4,31 @@ import Form from "../../../components/common/Form/Form";
 import { useDispatch, useSelector } from "react-redux";
 import AddIcon from "@mui/icons-material/Add";
 import TableComponent from "../../../components/common/Table/Table";
-import "./Programs.scss";
-import { deleteProg, getPrograms } from "../../../redux/features/ProgramSlice";
-import { getDevelopers } from "../../../redux/features/DevSlice";
+import "./Projects.scss";
+import { getPrograms } from "../../../redux/features/ProgramSlice";
+import {
+  deleteProject,
+  getProjects,
+} from "../../../redux/features/ProjectSlice";
 
-const Programs = () => {
+const Projects = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
-  const [status, setStatus] = useState("");
   const handleClose = () => setOpen(false);
-  const { devs } = useSelector((store: any) => store.developer);
   const { programs } = useSelector((store: any) => store.program);
+  const { projects } = useSelector((store: any) => store.project);
   const dispatch = useDispatch();
+  const [status, setStatus] = useState("");
   useEffect(() => {
-    dispatch(getDevelopers());
-    dispatch(getPrograms({ status }));
+    dispatch(getPrograms());
+    dispatch(getProjects({ status }));
   }, [dispatch, status]);
-
-  const programFields = [
-    { id: "programName", label: "Name", type: "text" },
-    { id: "totalAmount", label: "Total Price", type: "text" },
+  const handleStatusChange = (event: any) => {
+    setStatus(event.target.value);
+  };
+  const projectFields = [
+    { id: "projectName", label: "Name", type: "text" },
+    { id: "price", label: "Total Price", type: "text" },
     { id: "type", label: "Type", type: "text" },
     { id: "details", label: "Details", type: "text" },
     {
@@ -38,36 +43,32 @@ const Programs = () => {
       ],
     },
     {
-      id: "developer",
-      label: "Developer",
+      id: "program",
+      label: "Program",
       type: "select",
-      options: devs.map((dev: any) => ({
-        value: dev._id,
-        label: dev.username,
+      options: programs.map((prog: any) => ({
+        value: prog._id,
+        label: prog.programName,
       })),
     },
   ];
-
   const handleEdit = (id: string) => {};
 
   const handleDelete = (id: string) => {
-    dispatch(deleteProg(id));
+    dispatch(deleteProject(id));
   };
-  const handleStatusChange = (event: any) => {
-    setStatus(event.target.value);
-  };
+
   const columns = [
-    { id: "programName", label: "Name" },
-    { id: "totalAmount", label: "Total Price" },
+    { id: "projectName", label: "Name" },
+    { id: "price", label: "Total Price" },
     {
-      id: "developer",
-      label: "Developer",
+      id: "program",
+      label: "Program",
       render: (value: any) =>
-        value ? value.username : "dev is no longer available",
+        value ? value.programName : "program is no longer available",
     },
     { id: "status", label: "Status" },
   ];
-
   return (
     <div>
       <div className="tableHeader">
@@ -85,12 +86,12 @@ const Programs = () => {
       <Form
         isOpen={open}
         closeModal={handleClose}
-        fields={programFields}
-        title={"Program"}
+        fields={projectFields}
+        title={"Project"}
       />
       <TableComponent
         columns={columns}
-        data={programs}
+        data={projects}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
       />
@@ -98,4 +99,4 @@ const Programs = () => {
   );
 };
 
-export default Programs;
+export default Projects;

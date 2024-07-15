@@ -3,62 +3,65 @@ import axios, { AxiosResponse } from "axios";
 import { RootState } from "../store";
 import Cookies from "js-cookie";
 
-interface DevState {
+interface CustomerState {
   loading: boolean;
   error: string | null;
-  devs: any[];
-  allDevs: any[];
+  customers: any[];
+  allCustomers: any[];
 }
-interface DeveloperData {
+interface CustomerData {
   username: string;
   location: string;
   email: string;
   phone: string;
   status: string;
+  projects: any;
 }
-export const addDeveloper: any = createAsyncThunk(
-  "create/createDeveloper",
-  async (developerData: DeveloperData, thunkAPI: any) => {
+
+export const addCustomer: any = createAsyncThunk(
+  "create/createCustomer",
+  async (customerData: CustomerData, thunkAPI: any) => {
     try {
       const response: AxiosResponse<any> = await axios.post(
-        "http://localhost:5000/api/v1/developers",
-        developerData,
+        "http://localhost:5000/api/v1/customers",
+        customerData,
         { headers: { Authorization: `Bearer ${Cookies.get("token")}` } }
       );
-      response.status === 201 && thunkAPI.dispatch(getDevelopers());
+      response.status === 201 && thunkAPI.dispatch(getCustomers());
       return response.data;
     } catch (error) {
       throw error;
     }
   }
 );
-export const getDevelopers: any = createAsyncThunk(
-  "get/getDevelopers",
+
+export const getCustomers: any = createAsyncThunk(
+  "get/getCustomers",
   async (params: { status?: string }) => {
     try {
       const response: AxiosResponse<any> = await axios.get(
-        "http://localhost:5000/api/v1/developers",
+        "http://localhost:5000/api/v1/customers",
         {
           headers: { Authorization: `Bearer ${Cookies.get("token")}` },
           params: params,
         }
       );
+
       return response.data;
     } catch (error) {
       throw error;
     }
   }
 );
-
-export const deleteDev: any = createAsyncThunk(
-  "delete/deleteDev",
+export const deleteCustomer: any = createAsyncThunk(
+  "delete/deleteCustomer",
   async (devId: string, thunkAPI: any) => {
     try {
       const response: AxiosResponse<any> = await axios.delete(
-        `http://localhost:5000/api/v1/developers/${devId}`,
+        `http://localhost:5000/api/v1/customers/${devId}`,
         { headers: { Authorization: `Bearer ${Cookies.get("token")}` } }
       );
-      response.status === 200 && thunkAPI.dispatch(getDevelopers());
+      response.status === 200 && thunkAPI.dispatch(getCustomers());
       return response.data;
     } catch (error) {
       throw error;
@@ -66,19 +69,19 @@ export const deleteDev: any = createAsyncThunk(
   }
 );
 
-export const editDev: any = createAsyncThunk(
-  "edit/editDev",
+export const editCustomer: any = createAsyncThunk(
+  "edit/editCustomer",
   async (
-    payload: { devId: string; updatedDetails: DeveloperData },
+    payload: { devId: string; updatedDetails: CustomerData },
     thunkAPI: any
   ) => {
     try {
       const response: AxiosResponse<any> = await axios.put(
-        `http://localhost:5000/api/v1/developers/${payload.devId}`,
+        `http://localhost:5000/api/v1/customers/${payload.devId}`,
         payload.updatedDetails,
         { headers: { Authorization: `Bearer ${Cookies.get("token")}` } }
       );
-      response.status === 200 && thunkAPI.dispatch(getDevelopers());
+      response.status === 200 && thunkAPI.dispatch(getCustomers());
       return response.data;
     } catch (error) {
       throw error;
@@ -86,67 +89,56 @@ export const editDev: any = createAsyncThunk(
   }
 );
 
-const initialState: DevState = {
+const initialState: CustomerState = {
   loading: false,
   error: null,
-  devs: [],
-  allDevs: [],
+  customers: [],
+  allCustomers: [],
 };
 
-const devSlice = createSlice({
-  name: "developer",
+const customerSlice = createSlice({
+  name: "customer",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(addDeveloper.pending, (state) => {
+      .addCase(addCustomer.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(addDeveloper.fulfilled, (state) => {
+      .addCase(addCustomer.fulfilled, (state) => {
         state.loading = false;
       })
-      .addCase(addDeveloper.rejected, (state, action) => {
+      .addCase(addCustomer.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Registration failed";
       })
-      .addCase(getDevelopers.pending, (state) => {
+      .addCase(getCustomers.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getDevelopers.fulfilled, (state, action) => {
+      .addCase(getCustomers.fulfilled, (state, action) => {
         state.loading = false;
-        state.devs = action.payload.developers;
+        state.customers = action.payload.customers;
       })
-      .addCase(getDevelopers.rejected, (state, action) => {
+      .addCase(getCustomers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Registration failed";
       })
-      .addCase(deleteDev.pending, (state) => {
+      .addCase(deleteCustomer.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(deleteDev.fulfilled, (state, action) => {
+      .addCase(deleteCustomer.fulfilled, (state, action) => {
         state.loading = false;
       })
-      .addCase(deleteDev.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || "delete failed";
-      })
-      .addCase(editDev.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(editDev.fulfilled, (state, action) => {
-        state.loading = false;
-      })
-      .addCase(editDev.rejected, (state, action) => {
+      .addCase(deleteCustomer.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "delete failed";
       });
   },
 });
 
-export default devSlice.reducer;
+export default customerSlice.reducer;
 
-export const selectDev = (state: RootState) => state.developer;
+export const selectCustomer = (state: RootState) => state.customer;

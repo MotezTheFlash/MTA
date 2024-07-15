@@ -1,29 +1,32 @@
 import React, { useEffect, useState } from "react";
 import Form from "../../../components/common/Form/Form";
-import { Button, IconButton, Select, MenuItem } from "@mui/material";
+import { Button, IconButton, MenuItem, Select } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteDev, getDevelopers } from "../../../redux/features/DevSlice";
 import TableComponent from "../../../components/common/Table/Table";
-import "./Developers.scss";
-
-const Developers = () => {
-  const [status, setStatus] = useState("");
+import "./Customers.scss";
+import { getProjects } from "../../../redux/features/ProjectSlice";
+import {
+  getCustomers,
+  deleteCustomer,
+} from "../../../redux/features/CustomerSlice";
+const Customers = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const { devs } = useSelector((store: any) => store.developer);
+  const { customers } = useSelector((store: any) => store.customer);
+  const { projects } = useSelector((store: any) => store.project);
   const dispatch = useDispatch();
+  const [status, setStatus] = useState("");
 
   useEffect(() => {
-    dispatch(getDevelopers({ status }));
+    dispatch(getCustomers({ status }));
+    dispatch(getProjects());
   }, [dispatch, status]);
-
   const handleStatusChange = (event: any) => {
     setStatus(event.target.value);
   };
-
-  const developerFields = [
+  const customerFields = [
     { id: "username", label: "Username", type: "text" },
     { id: "location", label: "Location", type: "text" },
     { id: "email", label: "Email", type: "email" },
@@ -37,21 +40,29 @@ const Developers = () => {
         { value: "inactive", label: "Inactive" },
       ],
     },
+    {
+      id: "project",
+      label: "Project",
+      type: "select",
+      options: projects.map((project: any) => ({
+        value: project._id,
+        label: project.projectName,
+      })),
+    },
   ];
 
   const handleEdit = (id: string) => {};
 
   const handleDelete = (id: string) => {
-    dispatch(deleteDev(id));
+    dispatch(deleteCustomer(id));
   };
 
   const columns = [
-    { id: "username", label: "Developer" },
+    { id: "username", label: "Customer" },
     { id: "location", label: "Location" },
     { id: "status", label: "Status" },
     { id: "phone", label: "Phone Number" },
   ];
-
   return (
     <div>
       <div className="tableHeader">
@@ -67,12 +78,12 @@ const Developers = () => {
       <Form
         isOpen={open}
         closeModal={handleClose}
-        fields={developerFields}
-        title={"Developer"}
+        fields={customerFields}
+        title={"Customer"}
       />
       <TableComponent
         columns={columns}
-        data={devs}
+        data={customers}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
       />
@@ -80,4 +91,4 @@ const Developers = () => {
   );
 };
 
-export default Developers;
+export default Customers;

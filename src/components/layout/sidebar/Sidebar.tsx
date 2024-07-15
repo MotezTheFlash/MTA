@@ -10,14 +10,18 @@ import {
 } from "@mui/material";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import "./Sidebar.scss";
+import { useDispatch } from "react-redux";
+import { logout } from "../../../redux/features/LoginSlice";
 
 const Sidebar: React.FC<{
   userName: string;
   userAvatar?: string;
 }> = ({ userName, userAvatar }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleSignOut = () => {
-    navigate("/login");
+    dispatch(logout());
+    navigate("/");
   };
   const [open, setOpen] = React.useState(false);
 
@@ -60,6 +64,12 @@ const Sidebar: React.FC<{
               component={Link}
               to="/dashboard/customers">
               <ListItemText primary="Customers" />
+            </ListItem>
+            <ListItem
+              className="sidebar-item"
+              component={Link}
+              to="/dashboard/sales">
+              <ListItemText primary="Sales" />
             </ListItem>
           </div>
         </List>
