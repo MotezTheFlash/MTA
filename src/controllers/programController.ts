@@ -5,7 +5,7 @@ import Program from "../models/program";
 import { BadRequestError, NotFoundError } from "../errors";
 
 export const createProgram = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request | any, res: Response) => {
     const {
       programName,
       totalAmount,
@@ -15,7 +15,7 @@ export const createProgram = asyncHandler(
       status,
       developer,
     } = req.body;
-
+    const { userID } = req.user;
     if (!programName || !totalAmount || !status || !developer) {
       throw new BadRequestError(
         "Please provide program name, total amount, status, and developer"
@@ -30,6 +30,7 @@ export const createProgram = asyncHandler(
       details,
       status,
       developer,
+      createdBy: userID,
     });
 
     res.status(StatusCodes.CREATED).json({ program });
@@ -48,15 +49,43 @@ export const getProgram = asyncHandler(async (req: Request, res: Response) => {
 });
 export const getAllPrograms = asyncHandler(
   async (req: Request, res: Response) => {
-    const programs = await Program.find({}).populate("developer");
+    const { status } = req.query;
+    const query: any = {};
 
-    if (!programs.length) {
-      throw new NotFoundError("No programs found");
+    if (status) {
+      query.status = status;
     }
+
+    const programs = await Program.find(query).populate("developer");
+
+    /* if (!programs.length) {
+      throw new NotFoundError("No programs found");
+    } */
+
+    res.status(StatusCodes.OK).json({ programs, count: programs.length });
+  }
+);
+
+export const getAllMyPrograms = asyncHandler(
+  async (req: Request | any, res: Response) => {
+    const { userID } = req.user;
+    const { status } = req.query;
+    const query: any = { createdBy: userID };
+
+    if (status) {
+      query.status = status;
+    }
+
+    const programs = await Program.find(query).populate("developer");
+
+    /* if (!programs.length) {
+      throw new NotFoundError("No programs found");
+    } */
 
     res.status(StatusCodes.OK).json({ programs });
   }
 );
+
 export const updateProgram = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;

@@ -17,4 +17,4 @@ authRouter
   .post("/forgot-password", requestPasswordReset)
   .post("/reset-password/:token", resetPassword)
   .get("/userinfo", authentification, getMe)
-  .post("/logout", authentification, logout);
+  .post("/logout", logout);

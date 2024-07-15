@@ -5,9 +5,9 @@ import Customer from "../models/customer";
 import { BadRequestError, NotFoundError } from "../errors";
 
 export const createCustomer = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request | any, res: Response) => {
     const { username, email, phone, location, status, projects } = req.body;
-
+    const { userID } = req.user;
     if (!username || !email || !phone || !status) {
       throw new BadRequestError(
         "Please provide username, email, phone, and status"
@@ -21,6 +21,7 @@ export const createCustomer = asyncHandler(
       location,
       status,
       projects,
+      createdBy: userID,
     });
 
     res.status(StatusCodes.CREATED).json({ customer });
@@ -40,7 +41,34 @@ export const getCustomer = asyncHandler(async (req: Request, res: Response) => {
 
 export const getAllCustomers = asyncHandler(
   async (req: Request, res: Response) => {
-    const customers = await Customer.find({}).populate("projects");
+    const { status } = req.query;
+    const query: any = {};
+
+    if (status) {
+      query.status = status;
+    }
+
+    const customers = await Customer.find(query).populate("projects");
+
+    if (!customers.length) {
+      throw new NotFoundError("No customers found");
+    }
+
+    res.status(StatusCodes.OK).json({ customers, count: customers.length });
+  }
+);
+
+export const getAllMyCustomers = asyncHandler(
+  async (req: Request | any, res: Response) => {
+    const { userID } = req.user;
+    const { status } = req.query;
+    const query: any = { createdBy: userID };
+
+    if (status) {
+      query.status = status;
+    }
+
+    const customers = await Customer.find(query).populate("projects");
 
     if (!customers.length) {
       throw new NotFoundError("No customers found");

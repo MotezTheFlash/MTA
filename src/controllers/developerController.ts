@@ -9,8 +9,10 @@ import {
 } from "../errors";
 
 export const createDeveloper = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request | any, res: Response) => {
     const { username, email, phone, location, status } = req.body;
+
+    const { userID } = req.user;
     if (!username || !email || !phone) {
       throw new BadRequestError("Please provide username, email, and phone");
     }
@@ -20,6 +22,7 @@ export const createDeveloper = asyncHandler(
       phone,
       location,
       status,
+      createdBy: userID,
     });
 
     res.status(StatusCodes.CREATED).json({ developer });
@@ -41,10 +44,37 @@ export const getDeveloper = asyncHandler(
 
 export const getAllDevelopers = asyncHandler(
   async (req: Request, res: Response) => {
-    const developers = await Developer.find({}).populate("programs");
+    const { status } = req.query;
+    const query: any = {};
+
+    if (status) {
+      query.status = status;
+    }
+
+    const developers = await Developer.find(query);
+
+    /* if (!developers.length) {
+      throw new NotFoundError("No developers found");
+    } */
+
+    res.status(StatusCodes.OK).json({ developers, count: developers.length });
+  }
+);
+
+export const getAllMyDevelopers = asyncHandler(
+  async (req: Request | any, res: Response) => {
+    const { userID } = req.user;
+    const { status } = req.query;
+    const query: any = { createdBy: userID };
+
+    if (status) {
+      query.status = status;
+    }
+
+    const developers = await Developer.find(query).populate("programs");
 
     if (!developers.length) {
-      throw new NotFoundError("No developers found");
+      throw new NotFoundError("No developer found");
     }
 
     res.status(StatusCodes.OK).json({ developers });

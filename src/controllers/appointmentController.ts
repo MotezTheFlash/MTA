@@ -5,7 +5,8 @@ import Appointment from "../models/appointment";
 import { BadRequestError, NotFoundError } from "../errors";
 
 export const createAppointment = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request | any, res: Response) => {
+    const { userID } = req.user;
     const { date, customer, decision, notes } = req.body;
     if (!date || !customer) {
       throw new BadRequestError("Please provide date and customer");
@@ -16,6 +17,7 @@ export const createAppointment = asyncHandler(
       customer,
       decision,
       notes,
+      createdBy: userID,
     });
 
     res.status(StatusCodes.CREATED).json({ appointment });
@@ -44,6 +46,18 @@ export const getAllAppointments = asyncHandler(
     }
 
     res.status(StatusCodes.OK).json({ appointments });
+  }
+);
+export const getAllMyAppointments = asyncHandler(
+  async (req: Request | any, res: Response) => {
+    const { userID } = req.user;
+    const projects = await Appointment.find({ createdBy: userID }).populate(
+      "customer"
+    );
+    if (!projects.length) {
+      throw new NotFoundError("No projects found");
+    }
+    res.status(StatusCodes.OK).json({ projects });
   }
 );
 

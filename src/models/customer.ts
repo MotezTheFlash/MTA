@@ -7,6 +7,7 @@ export interface CustomerDocument extends Document {
   phone: string;
   status: string;
   projects: mongoose.Types.ObjectId[];
+  createdBy: mongoose.Types.ObjectId;
 }
 export interface CustomerModel extends Model<CustomerDocument> {}
 
@@ -51,6 +52,7 @@ const CustomerSchema: Schema<CustomerDocument> = new Schema<CustomerDocument>({
     default: "active",
   },
   projects: [{ type: Schema.Types.ObjectId, ref: "Project" }],
+  createdBy: { type: Schema.Types.ObjectId, ref: "User" },
 });
 
 const Customer: CustomerModel = mongoose.model<CustomerDocument, CustomerModel>(

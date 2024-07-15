@@ -21,6 +21,18 @@ export const authentification = asyncHandler(
       }
       const user = await User.findById(userID);
       req.user = user;
+      if (req.user) {
+        req.user = {
+          userID: req.user._id,
+          username: req.user.username,
+          email: req.user.email,
+          role: req.user.role,
+          location: req.user.location,
+          phone: req.user.phone,
+          avatar: req.user.avatar,
+          __v: req.user.__v,
+        };
+      }
       next();
     } catch (error: any) {
       console.log(error);
@@ -28,7 +40,7 @@ export const authentification = asyncHandler(
         return res.send("token expired");
       }
 
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("server error");
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(error);
     }
   }
 );

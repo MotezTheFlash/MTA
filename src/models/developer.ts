@@ -6,6 +6,7 @@ export interface DeveloperDocument extends Document {
   location: string;
   phone: string;
   status: string;
+  createdBy: mongoose.Types.ObjectId;
 }
 
 export interface DeveloperModel extends Model<DeveloperDocument> {}
@@ -50,6 +51,7 @@ const DeveloperSchema: Schema<DeveloperDocument> =
       enum: ["active", "inactive"],
       default: "active",
     },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User" },
   });
 
 const Developer: DeveloperModel = mongoose.model<

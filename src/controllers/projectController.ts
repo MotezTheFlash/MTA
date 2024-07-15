@@ -5,7 +5,7 @@ import Project from "../models/project";
 import { BadRequestError, NotFoundError } from "../errors";
 
 export const createProject = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request | any, res: Response) => {
     const { projectName, price, photo, type, details, status, program } =
       req.body;
     if (!projectName || !price || !status || !program) {
@@ -13,6 +13,7 @@ export const createProject = asyncHandler(
         "Please provide projectName, price, status, and program"
       );
     }
+    const { userID } = req.user;
     const project = await Project.create({
       projectName,
       price,
@@ -21,6 +22,7 @@ export const createProject = asyncHandler(
       details,
       status,
       program,
+      createdBy: userID,
     });
 
     res.status(StatusCodes.CREATED).json({ project });
@@ -36,7 +38,34 @@ export const getProject = asyncHandler(async (req: Request, res: Response) => {
 });
 export const getAllProjects = asyncHandler(
   async (req: Request, res: Response) => {
-    const projects = await Project.find({}).populate("program");
+    const { status } = req.query;
+    const query: any = {};
+
+    if (status) {
+      query.status = status;
+    }
+
+    const projects = await Project.find(query).populate("program");
+
+    if (!projects.length) {
+      throw new NotFoundError("No projects found");
+    }
+
+    res.status(StatusCodes.OK).json({ projects, count: projects.length });
+  }
+);
+
+export const getAllMyProjects = asyncHandler(
+  async (req: Request | any, res: Response) => {
+    const { userID } = req.user;
+    const { status } = req.query;
+    const query: any = { createdBy: userID };
+
+    if (status) {
+      query.status = status;
+    }
+
+    const projects = await Project.find(query).populate("program");
 
     if (!projects.length) {
       throw new NotFoundError("No projects found");

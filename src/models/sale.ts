@@ -7,6 +7,7 @@ export interface SaleDocument extends Document {
   VAT: number;
   project: mongoose.Types.ObjectId;
   status: string;
+  createdBy: mongoose.Types.ObjectId;
 }
 
 export interface SaleModel extends Model<SaleDocument> {}
@@ -28,6 +29,7 @@ const SaleSchema: Schema<SaleDocument> = new Schema<SaleDocument>(
     date: { type: Date },
     customer: { type: Schema.Types.ObjectId, ref: "Customer" },
     project: { type: Schema.Types.ObjectId, ref: "Project" },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );

@@ -7,6 +7,7 @@ export interface ProjectDocument extends Document {
   details: string;
   status: string;
   program: mongoose.Types.ObjectId;
+  createdBy: mongoose.Types.ObjectId;
 }
 
 export interface ProjectModel extends Model<ProjectDocument> {}
@@ -36,6 +37,7 @@ const ProjectSchema: Schema<ProjectDocument> = new Schema<ProjectDocument>({
     enum: ["active", "inactive", "blocked", "deleted"],
   },
   program: { type: Schema.Types.ObjectId, ref: "Program" },
+  createdBy: { type: Schema.Types.ObjectId, ref: "User" },
 });
 
 const Project: ProjectModel = mongoose.model<ProjectDocument, ProjectModel>(

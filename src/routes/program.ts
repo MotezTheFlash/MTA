@@ -5,13 +5,14 @@ import {
   getAllPrograms,
   getProgram,
   updateProgram,
+  getAllMyPrograms,
 } from "../controllers/programController";
 import { isAdmin } from "../middleware/isAdmin";
 
 export const programRouter = express.Router();
 
 programRouter.route("/").post(isAdmin, createProgram).get(getAllPrograms);
-
+programRouter.route("/my").get(getAllMyPrograms);
 programRouter
   .route("/:id")
   .get(getProgram)

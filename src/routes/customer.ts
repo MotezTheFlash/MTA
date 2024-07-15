@@ -5,13 +5,14 @@ import {
   getAllCustomers,
   getCustomer,
   updateCustomer,
+  getAllMyCustomers,
 } from "../controllers/customerController";
 import { isAdmin } from "../middleware/isAdmin";
 
 export const customerRouter = express.Router();
 
 customerRouter.route("/").post(isAdmin, createCustomer).get(getAllCustomers);
-
+customerRouter.route("/my").get(getAllMyCustomers);
 customerRouter
   .route("/:id")
   .get(getCustomer)

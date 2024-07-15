@@ -4,6 +4,7 @@ export interface PaymentDocument extends Document {
   sale: mongoose.Types.ObjectId;
   status: string;
   amount: number;
+  createdBy: mongoose.Types.ObjectId;
 }
 
 export interface PaymentModel extends Model<PaymentDocument> {}
@@ -21,6 +22,7 @@ const PaymentSchema: Schema<PaymentDocument> = new Schema<PaymentDocument>(
     },
     date: { type: Date, required: true },
     sale: { type: Schema.Types.ObjectId, ref: "Sale", required: true },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );

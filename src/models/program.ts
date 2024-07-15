@@ -7,6 +7,7 @@ export interface ProgramDocument extends Document {
   details: string;
   status: string;
   developer: mongoose.Types.ObjectId;
+  createdBy: mongoose.Types.ObjectId;
 }
 
 export interface ProgramModel extends Model<ProgramDocument> {}
@@ -42,6 +43,7 @@ const ProgramSchema: Schema<ProgramDocument> = new Schema<ProgramDocument>({
     ref: "Developer",
     required: [true, "You must assign a developer to the program"],
   },
+  createdBy: { type: Schema.Types.ObjectId, ref: "User" },
 });
 
 const Program: ProgramModel = mongoose.model<ProgramDocument, ProgramModel>(

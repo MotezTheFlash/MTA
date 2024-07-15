@@ -4,25 +4,28 @@ import asyncHandler from "express-async-handler";
 import Sale from "../models/sale";
 import { BadRequestError, NotFoundError } from "../errors";
 
-export const createSale = asyncHandler(async (req: Request, res: Response) => {
-  const { date, commission, VAT, project, customer, status } = req.body;
-  if (!date || !commission || !VAT || !project || !customer || !status) {
-    throw new BadRequestError(
-      "Please provide date, commission, VAT, project, customer, and status"
-    );
+export const createSale = asyncHandler(
+  async (req: Request | any, res: Response) => {
+    const { date, commission, VAT, project, customer, status } = req.body;
+    if (!date || !commission || !VAT || !project || !customer || !status) {
+      throw new BadRequestError(
+        "Please provide date, commission, VAT, project, customer, and status"
+      );
+    }
+    const { userID } = req.user;
+    const sale = await Sale.create({
+      date,
+      commission,
+      VAT,
+      project,
+      customer,
+      status,
+      createdBy: userID,
+    });
+
+    res.status(StatusCodes.CREATED).json({ sale });
   }
-
-  const sale = await Sale.create({
-    date,
-    commission,
-    VAT,
-    project,
-    customer,
-    status,
-  });
-
-  res.status(StatusCodes.CREATED).json({ sale });
-});
+);
 
 export const getSale = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -36,7 +39,14 @@ export const getSale = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getAllSales = asyncHandler(async (req: Request, res: Response) => {
-  const sales = await Sale.find({}).populate("project customer");
+  const { status } = req.query;
+  const query: any = {};
+
+  if (status) {
+    query.status = status;
+  }
+
+  const sales = await Sale.find(query).populate("project customer");
 
   if (!sales.length) {
     throw new NotFoundError("No sales found");
@@ -44,6 +54,26 @@ export const getAllSales = asyncHandler(async (req: Request, res: Response) => {
 
   res.status(StatusCodes.OK).json({ sales });
 });
+
+export const getAllMySales = asyncHandler(
+  async (req: Request | any, res: Response) => {
+    const { userID } = req.user;
+    const { status } = req.query;
+    const query: any = { createdBy: userID };
+
+    if (status) {
+      query.status = status;
+    }
+
+    const sales = await Sale.find(query).populate("project customer");
+
+    if (!sales.length) {
+      throw new NotFoundError("No sales found");
+    }
+
+    res.status(StatusCodes.OK).json({ sales });
+  }
+);
 
 export const updateSale = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;

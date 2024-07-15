@@ -9,8 +9,8 @@ import {
 import { Request, Response } from "express";
 export const updateUser = asyncHandler(
   async (req: Request | any, res: Response) => {
-    const userID = req.user.id;
-    const { email, username, password, ...rest } = req.body;
+    const { userID } = req.user;
+    const { email, username, phone, location } = req.body;
     const user = await User.findById(userID);
     if (!user) {
       throw new NotFoundError("User doesn't exist");
@@ -18,7 +18,8 @@ export const updateUser = asyncHandler(
 
     if (email) user.email = email;
     if (username) user.username = username;
-    if (password) user.password = password;
+    if (phone) user.password = phone;
+    if (location) user.password = location;
     await user.save();
 
     res
