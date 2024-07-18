@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
@@ -11,20 +10,19 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import "./Form.scss";
-import { useDispatch } from "react-redux";
-import { addDeveloper } from "../../../redux/features/DevSlice";
-import { addProgram } from "../../../redux/features/ProgramSlice";
-import { addProject } from "../../../redux/features/ProjectSlice";
-import { addCustomer } from "../../../redux/features/CustomerSlice";
-import { addSale } from "../../../redux/features/SaleSlice";
 import { FormProps } from "../../../types/types";
+import { useDispatch } from "react-redux";
 
-const Form: React.FC<FormProps> = ({ isOpen, closeModal, fields, title }) => {
+const UpdateForm: React.FC<FormProps> = ({
+  isOpen,
+  closeModal,
+  fields,
+  title,
+}) => {
   const [formData, setFormData] = useState<{ [key: string]: string }>({});
 
   const handleChange = (id: string, value: string) => {
-    setFormData((prev) => ({
+    setFormData((prev: any) => ({
       ...prev,
       [id]: value,
     }));
@@ -32,28 +30,8 @@ const Form: React.FC<FormProps> = ({ isOpen, closeModal, fields, title }) => {
   let location = useLocation();
   const dispatch = useDispatch();
   const handleSubmit = () => {
-    switch (true) {
-      case location.pathname.includes("developers"):
-        dispatch(addDeveloper(formData));
-        break;
-      case location.pathname.includes("programs"):
-        dispatch(addProgram(formData));
-        break;
-      case location.pathname.includes("projects"):
-        dispatch(addProject(formData));
-        break;
-      case location.pathname.includes("customers"):
-        dispatch(addCustomer(formData));
-        break;
-      case location.pathname.includes("sales"):
-        dispatch(addSale(formData));
-        break;
-      default:
-        console.log("incorrect");
-        break;
-    }
+    console.log("update");
   };
-
   return (
     <div>
       <Modal
@@ -66,7 +44,7 @@ const Form: React.FC<FormProps> = ({ isOpen, closeModal, fields, title }) => {
             Add a {title}
           </Typography>
           <form
-            className="form"
+            className="updateForm"
             onSubmit={(e) => {
               e.preventDefault();
               handleSubmit();
@@ -122,4 +100,4 @@ const Form: React.FC<FormProps> = ({ isOpen, closeModal, fields, title }) => {
   );
 };
 
-export default Form;
+export default UpdateForm;

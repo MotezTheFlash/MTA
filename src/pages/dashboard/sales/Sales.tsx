@@ -74,12 +74,14 @@ const Sales = () => {
     {
       id: "customer",
       label: "Client",
-      render: (value: any) => value.username,
+      render: (value: any) =>
+        value ? value.username : "customer no longer available",
     },
     {
       id: "project",
       label: "Project",
-      render: (value: any) => value.projectName,
+      render: (value: any) =>
+        value ? value.projectName : "project no longer available",
     },
     { id: "status", label: "Status" },
   ];
