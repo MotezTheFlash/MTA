@@ -22,7 +22,7 @@ const SaleSchema: Schema<SaleDocument> = new Schema<SaleDocument>(
     },
     status: {
       type: String,
-      enum: ["in progress", "completed , canceled"],
+      enum: ["in progress", "completed", "canceled"],
     },
     commission: { type: Number },
     VAT: { type: Number },

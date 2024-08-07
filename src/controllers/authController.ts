@@ -64,6 +64,8 @@ export const login = asyncHandler(
       throw new BadRequestError("User doesn't exist, please check email");
     } else {
       const match = await user?.comparePassword(password);
+      console.log(user);
+      console.log(match);
       if (match === false) {
         throw new UnauthenticatedError("permission denied");
       }

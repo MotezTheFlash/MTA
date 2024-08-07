@@ -7,6 +7,7 @@ import {
   NotFoundError,
 } from "../errors";
 import { Request, Response } from "express";
+
 export const updateUser = asyncHandler(
   async (req: Request | any, res: Response) => {
     const { userID } = req.user;
@@ -18,8 +19,9 @@ export const updateUser = asyncHandler(
 
     if (email) user.email = email;
     if (username) user.username = username;
-    if (phone) user.password = phone;
-    if (location) user.password = location;
+    if (phone) user.phone = phone;
+    if (location) user.location = location;
+    if (req.file) user.avatar = `/uploads/avatars/${req.file.filename}`;
     await user.save();
 
     res

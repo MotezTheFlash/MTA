@@ -2,11 +2,11 @@ import express, { Request, Response } from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
-dotenv.config();
-const app = express();
+import { swaggerRouter } from "./swagger";
 import { router } from "./routes/index";
 
-require("dotenv").config();
+dotenv.config();
+const app = express();
 
 app.use(
   cors({
@@ -15,6 +15,10 @@ app.use(
   })
 );
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
+
+// Use Swagger router
+app.use(swaggerRouter);
 
 app.use(router);
 app.all("*", (req: Request, res: Response) => {
