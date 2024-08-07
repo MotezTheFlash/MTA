@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { useLocation } from "react-router-dom";
 import {
   FormControl,
   InputLabel,
@@ -11,15 +10,20 @@ import {
   TextField,
 } from "@mui/material";
 import { FormProps } from "../../../types/types";
-import { useDispatch } from "react-redux";
 
 const UpdateForm: React.FC<FormProps> = ({
   isOpen,
   closeModal,
   fields,
   title,
+  initialData = {},
+  submit,
 }) => {
   const [formData, setFormData] = useState<{ [key: string]: string }>({});
+
+  useEffect(() => {
+    setFormData(initialData);
+  }, [initialData]);
 
   const handleChange = (id: string, value: string) => {
     setFormData((prev: any) => ({
@@ -27,11 +31,11 @@ const UpdateForm: React.FC<FormProps> = ({
       [id]: value,
     }));
   };
-  let location = useLocation();
-  const dispatch = useDispatch();
+
   const handleSubmit = () => {
-    console.log("update");
+    submit({ id: initialData._id, updatedDetails: formData });
   };
+
   return (
     <div>
       <Modal
@@ -41,7 +45,7 @@ const UpdateForm: React.FC<FormProps> = ({
         aria-describedby="modal-modal-description">
         <div className="formBox">
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Add a {title}
+            Update {title}
           </Typography>
           <form
             className="updateForm"

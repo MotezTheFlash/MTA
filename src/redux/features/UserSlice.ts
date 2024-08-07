@@ -16,20 +16,26 @@ interface UserState {
 }
 export const updateUser: any = createAsyncThunk(
   "update/updateUser",
-  async (userData: UserData) => {
+  async (userData: FormData, thunkAPI: any) => {
     try {
       const response: AxiosResponse<any> = await axios.put(
         "http://localhost:5000/api/v1/users",
         userData,
-        { headers: { Authorization: `Bearer ${Cookies.get("token")}` } }
-        /* { withCredentials: true }, */
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
+      response.status === 200 && thunkAPI.dispatch(getUserDetails());
       return response.data;
     } catch (error) {
       throw error;
     }
   }
 );
+
 export const getUserDetails: any = createAsyncThunk(
   "getMe/GetUser",
   async () => {

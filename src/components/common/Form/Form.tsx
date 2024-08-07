@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { useLocation } from "react-router-dom";
 import {
   FormControl,
   InputLabel,
@@ -12,15 +10,15 @@ import {
   TextField,
 } from "@mui/material";
 import "./Form.scss";
-import { useDispatch } from "react-redux";
-import { addDeveloper } from "../../../redux/features/DevSlice";
-import { addProgram } from "../../../redux/features/ProgramSlice";
-import { addProject } from "../../../redux/features/ProjectSlice";
-import { addCustomer } from "../../../redux/features/CustomerSlice";
-import { addSale } from "../../../redux/features/SaleSlice";
 import { FormProps } from "../../../types/types";
 
-const Form: React.FC<FormProps> = ({ isOpen, closeModal, fields, title }) => {
+const Form: React.FC<FormProps> = ({
+  isOpen,
+  closeModal,
+  fields,
+  title,
+  submit,
+}) => {
   const [formData, setFormData] = useState<{ [key: string]: string }>({});
 
   const handleChange = (id: string, value: string) => {
@@ -29,29 +27,8 @@ const Form: React.FC<FormProps> = ({ isOpen, closeModal, fields, title }) => {
       [id]: value,
     }));
   };
-  let location = useLocation();
-  const dispatch = useDispatch();
   const handleSubmit = () => {
-    switch (true) {
-      case location.pathname.includes("developers"):
-        dispatch(addDeveloper(formData));
-        break;
-      case location.pathname.includes("programs"):
-        dispatch(addProgram(formData));
-        break;
-      case location.pathname.includes("projects"):
-        dispatch(addProject(formData));
-        break;
-      case location.pathname.includes("customers"):
-        dispatch(addCustomer(formData));
-        break;
-      case location.pathname.includes("sales"):
-        dispatch(addSale(formData));
-        break;
-      default:
-        console.log("incorrect");
-        break;
-    }
+    submit(formData);
   };
 
   return (

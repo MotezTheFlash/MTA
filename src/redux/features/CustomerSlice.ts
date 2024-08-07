@@ -72,12 +72,12 @@ export const deleteCustomer: any = createAsyncThunk(
 export const editCustomer: any = createAsyncThunk(
   "edit/editCustomer",
   async (
-    payload: { devId: string; updatedDetails: CustomerData },
+    payload: { id: string; updatedDetails: CustomerData },
     thunkAPI: any
   ) => {
     try {
       const response: AxiosResponse<any> = await axios.put(
-        `http://localhost:5000/api/v1/customers/${payload.devId}`,
+        `http://localhost:5000/api/v1/customers/${payload.id}`,
         payload.updatedDetails,
         { headers: { Authorization: `Bearer ${Cookies.get("token")}` } }
       );

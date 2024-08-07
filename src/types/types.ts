@@ -10,4 +10,19 @@ export interface FormProps {
   fields: Field[];
   title: String;
   initialData?: any;
+  submit?: any;
+}
+export interface Column {
+  id: string;
+  label: string;
+  render?: (value: any, item: any) => React.ReactNode;
+}
+
+export interface TableComponentProps {
+  columns: Column[];
+  data?: any[];
+  handleEdit: (id: string, data: any) => void;
+  handleDelete: (id: string) => void;
+  fields: Field[];
+  title: string;
 }

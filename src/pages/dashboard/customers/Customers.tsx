@@ -9,6 +9,8 @@ import { getProjects } from "../../../redux/features/ProjectSlice";
 import {
   getCustomers,
   deleteCustomer,
+  editCustomer,
+  addCustomer,
 } from "../../../redux/features/CustomerSlice";
 const Customers = () => {
   const [open, setOpen] = useState(false);
@@ -50,8 +52,12 @@ const Customers = () => {
       })),
     },
   ];
-
-  const handleEdit = (id: string) => {};
+  const handleAdd = (data: any) => {
+    dispatch(addCustomer(data));
+  };
+  const handleEdit = (id: string, data: any) => {
+    dispatch(editCustomer(id, data));
+  };
 
   const handleDelete = (id: string) => {
     dispatch(deleteCustomer(id));
@@ -80,12 +86,15 @@ const Customers = () => {
         closeModal={handleClose}
         fields={customerFields}
         title={"Customer"}
+        submit={handleAdd}
       />
       <TableComponent
         columns={columns}
         data={customers}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
+        fields={customerFields}
+        title={"Customer"}
       />
     </div>
   );

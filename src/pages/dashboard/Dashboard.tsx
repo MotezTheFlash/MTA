@@ -35,6 +35,7 @@ const Dashboard = () => {
     { name: "Programs", data: programs },
     { name: "Projects", data: projects },
   ];
+  console.log(userInfos);
 
   return (
     <div className="dashboardContainer">

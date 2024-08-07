@@ -28,12 +28,17 @@ const Sidebar: React.FC<{
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
+  console.log(userAvatar);
 
   const DrawerList = (
     <div className="SidebarContainer" onClick={toggleDrawer(false)}>
       <div className="container">
         <div className="UserInfoContainer">
-          <Avatar alt={userName} src={userAvatar} className="UserAvatar" />
+          <Avatar
+            alt={userName}
+            src={`http://localhost:5000${userAvatar}`}
+            className="UserAvatar"
+          />
           <div className="UserName">{userName}</div>
         </div>
         <List component="nav">

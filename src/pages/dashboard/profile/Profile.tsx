@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails } from "../../../redux/features/LoginSlice";
-import { TextField, Button, Box } from "@mui/material";
+import { TextField, Button, Box, Avatar, Input } from "@mui/material";
 import { updateUser } from "../../../redux/features/UserSlice";
 
 const Profile = () => {
@@ -13,7 +13,10 @@ const Profile = () => {
     email: "",
     phone: "",
     location: "",
+    avatar: null,
   });
+
+  const [file, setFile] = useState(null);
 
   useEffect(() => {
     dispatch(getUserDetails());
@@ -26,6 +29,7 @@ const Profile = () => {
         email: userInfos.email || "",
         phone: userInfos.phone || "",
         location: userInfos.location || "",
+        avatar: userInfos.avatar || "",
       });
     }
   }, [userInfos]);
@@ -38,10 +42,23 @@ const Profile = () => {
     }));
   };
 
+  const handleFileChange = (event: any) => {
+    setFile(event.target.files[0]);
+  };
+
   const handleSubmit = (event: any) => {
     event.preventDefault();
-    dispatch(updateUser(formData));
-    console.log("Form submitted:", formData);
+
+    const updatedFormData = new FormData();
+    updatedFormData.append("username", formData.username);
+    updatedFormData.append("email", formData.email);
+    updatedFormData.append("phone", formData.phone);
+    updatedFormData.append("location", formData.location);
+    if (file) {
+      updatedFormData.append("avatar", file);
+    }
+
+    dispatch(updateUser(updatedFormData));
   };
 
   return (
@@ -55,6 +72,12 @@ const Profile = () => {
         gap: 2,
         maxWidth: 900,
       }}>
+      <Avatar
+        alt={userInfos.userName}
+        src={`http://localhost:5000${userInfos.avatar}`}
+        className="UserAvatar"
+      />
+      <Input fullWidth type="file" name="avatar" onChange={handleFileChange} />
       <TextField
         label="Username"
         name="username"

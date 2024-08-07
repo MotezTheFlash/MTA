@@ -5,7 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import AddIcon from "@mui/icons-material/Add";
 import TableComponent from "../../../components/common/Table/Table";
 import "./Programs.scss";
-import { deleteProg, getPrograms } from "../../../redux/features/ProgramSlice";
+import {
+  addProgram,
+  deleteProg,
+  editProg,
+  getPrograms,
+} from "../../../redux/features/ProgramSlice";
 import { getDevelopers } from "../../../redux/features/DevSlice";
 
 const Programs = () => {
@@ -47,8 +52,12 @@ const Programs = () => {
       })),
     },
   ];
-
-  const handleEdit = (id: string) => {};
+  const handleAdd = (data: any) => {
+    dispatch(addProgram(data));
+  };
+  const handleEdit = (id: string, data: any) => {
+    dispatch(editProg(id, data));
+  };
 
   const handleDelete = (id: string) => {
     dispatch(deleteProg(id));
@@ -87,12 +96,15 @@ const Programs = () => {
         closeModal={handleClose}
         fields={programFields}
         title={"Program"}
+        submit={handleAdd}
       />
       <TableComponent
         columns={columns}
         data={programs}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
+        fields={programFields}
+        title={"Program"}
       />
     </div>
   );

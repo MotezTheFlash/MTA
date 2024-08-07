@@ -7,7 +7,12 @@ import TableComponent from "../../../components/common/Table/Table";
 import "./Sales.scss";
 import { getProjects } from "../../../redux/features/ProjectSlice";
 import { getCustomers } from "../../../redux/features/CustomerSlice";
-import { deleteSale, getSales } from "../../../redux/features/SaleSlice";
+import {
+  addSale,
+  deleteSale,
+  editSale,
+  getSales,
+} from "../../../redux/features/SaleSlice";
 const Sales = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -59,7 +64,12 @@ const Sales = () => {
       })),
     },
   ];
-  const handleEdit = (id: string) => {};
+  const handleAdd = (data: any) => {
+    dispatch(addSale(data));
+  };
+  const handleEdit = (id: string, data: any) => {
+    dispatch(editSale(id, data));
+  };
 
   const handleDelete = (id: string) => {
     dispatch(deleteSale(id));
@@ -70,7 +80,6 @@ const Sales = () => {
   const columns = [
     { id: "date", label: "Date", render: (value: any) => formatDate(value) },
     { id: "reference", label: "Reference" },
-
     {
       id: "customer",
       label: "Client",
@@ -103,12 +112,15 @@ const Sales = () => {
         closeModal={handleClose}
         fields={saleFields}
         title={"Sale"}
+        submit={handleAdd}
       />
       <TableComponent
         columns={columns}
         data={sales}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
+        fields={saleFields}
+        title={"Sale"}
       />
     </div>
   );

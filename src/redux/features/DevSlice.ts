@@ -69,12 +69,12 @@ export const deleteDev: any = createAsyncThunk(
 export const editDev: any = createAsyncThunk(
   "edit/editDev",
   async (
-    payload: { devId: string; updatedDetails: DeveloperData },
+    payload: { id: string; updatedDetails: DeveloperData },
     thunkAPI: any
   ) => {
     try {
       const response: AxiosResponse<any> = await axios.put(
-        `http://localhost:5000/api/v1/developers/${payload.devId}`,
+        `http://localhost:5000/api/v1/developers/${payload.id}`,
         payload.updatedDetails,
         { headers: { Authorization: `Bearer ${Cookies.get("token")}` } }
       );

@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Form from "../../../components/common/Form/Form";
-import { Button, IconButton, Select, MenuItem } from "@mui/material";
+import { Button, Select, MenuItem } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteDev, getDevelopers } from "../../../redux/features/DevSlice";
+import {
+  addDeveloper,
+  deleteDev,
+  editDev,
+  getDevelopers,
+} from "../../../redux/features/DevSlice";
 import TableComponent from "../../../components/common/Table/Table";
 import "./Developers.scss";
 
@@ -38,8 +43,12 @@ const Developers = () => {
       ],
     },
   ];
-
-  const handleEdit = (id: string) => {};
+  const handleAdd = (data: any) => {
+    dispatch(addDeveloper(data));
+  };
+  const handleEdit = (id: string, data: any) => {
+    dispatch(editDev(id, data));
+  };
 
   const handleDelete = (id: string) => {
     dispatch(deleteDev(id));
@@ -69,12 +78,15 @@ const Developers = () => {
         closeModal={handleClose}
         fields={developerFields}
         title={"Developer"}
+        submit={handleAdd}
       />
       <TableComponent
         columns={columns}
         data={devs}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
+        fields={developerFields}
+        title={"Developer"}
       />
     </div>
   );

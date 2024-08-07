@@ -7,7 +7,9 @@ import TableComponent from "../../../components/common/Table/Table";
 import "./Projects.scss";
 import { getPrograms } from "../../../redux/features/ProgramSlice";
 import {
+  addProject,
   deleteProject,
+  editProject,
   getProjects,
 } from "../../../redux/features/ProjectSlice";
 
@@ -52,7 +54,12 @@ const Projects = () => {
       })),
     },
   ];
-  const handleEdit = (id: string) => {};
+  const handleAdd = (data: any) => {
+    dispatch(addProject(data));
+  };
+  const handleEdit = (id: string, data: any) => {
+    dispatch(editProject(id, data));
+  };
 
   const handleDelete = (id: string) => {
     dispatch(deleteProject(id));
@@ -88,12 +95,15 @@ const Projects = () => {
         closeModal={handleClose}
         fields={projectFields}
         title={"Project"}
+        submit={handleAdd}
       />
       <TableComponent
         columns={columns}
         data={projects}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
+        fields={projectFields}
+        title={"Project"}
       />
     </div>
   );
